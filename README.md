@@ -2,6 +2,10 @@
 
 Independent, mobile-first static portal for The ADORA, Ho Chi Minh City, 28–29 October 2026. Prepared on 27 October. No backend, authentication, framework, analytics, remotely loaded fonts, service worker, or runtime package dependencies. **Prepared for controlled phone testing. Attendee rollout has not been accepted on real phones in the two halls.**
 
+Live test site: https://skidbladnr.github.io/brew-asia-2026-attendee-portal/
+
+Public repository: https://github.com/Skidbladnr/brew-asia-2026-attendee-portal
+
 ## Current hall configuration
 
 The organizer-supplied pairs are in `public/config.json`:
@@ -82,7 +86,7 @@ Keep the previous static release for rollback. If the wrapper fails, use `mode: 
 
 ## Single-QR destination
 
-Encode the final organizer-approved **HTTPS root URL of this portal**, with no hall selected. No QR image is generated yet because the deployment URL and rollout approval are pending. Avoid URL shorteners and QR services that can expire or redirect unexpectedly. Use an approved QR generator after the URL is fixed.
+The prepared QR encodes **https://skidbladnr.github.io/brew-asia-2026-attendee-portal/**, with no hall selected. A PNG, SVG and four-label A4 PDF accompany the delivery package. The PNG and all four codes in a rendered PDF were software-decoded against the exact address. Print at 100% / actual size; each label is 90 × 125 mm. Real camera/printed-label acceptance and organizer approval are still required before distribution or covering existing codes. Retain the original direct hall codes. Site updates at this same address do not require a new QR.
 
 Optional test deep links on that same root are `?hall=a&lang=vi` and `?hall=b&lang=ko`. They preselect only a known hall and language; they never auto-join. Accepted `lang` values are `vi`, `th`, `zh-CN`, `ko`, `ja`. Other query values cannot inject a session URL. Default landing behavior offers both named halls. Test printed size, camera scanning, trailing slash/subdirectory hosting and cellular access; a loopback address is never a phone QR destination.
 

@@ -2,6 +2,10 @@
 
 Repository: https://github.com/Skidbladnr/brew-asia-2026-attendee-portal. Public visibility was authorized by the owner on 27 October 2026. The manual publishing workflow supports controlled phone testing; attendee QR distribution remains subject to acceptance. Use a separate development computer. Leave the two presenter MacBooks and routers running their established setup.
 
+Live controlled-test address: https://skidbladnr.github.io/brew-asia-2026-attendee-portal/
+
+Deployment [40545063071](https://github.com/Skidbladnr/brew-asia-2026-attendee-portal/actions/runs/40545063071) succeeded on 27 October 2026 from commit `3664b9fd247fc1abf973f962b8d9439e57aeab9f`. The hosted shell, programme, hall selection and direct-link destinations were checked; no provider session was joined.
+
 ## Is this plug and play?
 
 Once the final HTTPS address passes acceptance, yes: the portal already contains both official attendee/embed URL pairs. It needs no backend, API key, authentication service or connection to the presenter computers. Operators start the two existing sessions normally; attendees select a hall, select a language, tap Start listening and enable audio inside the listening panel.
@@ -18,9 +22,9 @@ The one-hour setting is not an automatic cutoff. Ended sessions can be reopened 
 4. Commit the prepared workflow to the repository’s default branch. It has only a manual trigger; pushing a change does not publish it.
 5. After approval for the controlled test deployment, open **Actions → Publish attendee portal (manual) → Run workflow** on the intended branch. It runs unit/configuration checks, builds `dist/`, uploads that static artifact and deploys through the `github-pages` environment. It does not run the browser suite; that suite must pass locally before release.
 6. Open the exact HTTPS URL reported by the deployment, including its project path and trailing slash. GitHub project sites ordinarily look like `https://OWNER.github.io/REPOSITORY/`; those names are placeholders, not the final QR destination. Confirm HTTPS in Pages settings.
-7. Complete `DEVICE-ACCEPTANCE.md` and `GO-NO-GO.md`. Only after acceptance and explicit organizer authorization, generate the portal QR from that final address and test the actual printed sticker. Retain official direct hall QR codes for recovery.
+7. Complete `DEVICE-ACCEPTANCE.md` and `GO-NO-GO.md`. Prepare the portal QR from that final address and test the actual printed sticker. Distribute it only after acceptance and explicit organizer authorization. Retain official direct hall QR codes for recovery.
 
-All asset/configuration URLs are relative. No special Vite base, routing rewrite, API configuration or domain is needed. A local project-path simulation passed; real Pages deployment is still pending. Deploying from the repository branch root without this workflow will not serve the intended built portal.
+All asset/configuration URLs are relative. No special Vite base, routing rewrite, API configuration or domain is needed. A local project-path simulation and the hosted Pages shell check passed. Real-device audio and frame acceptance remain pending. Deploying from the repository branch root without this workflow will not serve the intended built portal.
 
 ## Hosting differences and updates
 
