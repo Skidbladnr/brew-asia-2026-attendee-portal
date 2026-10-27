@@ -2,7 +2,7 @@ import { startProgramme, setProgrammeHall } from './schedule-view.js';
 import { LANGUAGES, normalizeConfig, initialLanguage, embedSource } from './config-core.js';
 
 const $ = id => document.getElementById(id);
-let config, selected, waitTimer;
+let config, selected;
 const query = new URLSearchParams(location.search);
 const preferred = query.get('lang');
 const language = $('language');
@@ -28,19 +28,13 @@ function updateQuickStart() {
 updateQuickStart();
 
 function disconnect(message = '') {
-  clearTimeout(waitTimer);
   // Remove the browsing context before making any new one; never hide old frames.
   $('frame-container').replaceChildren();
   $('leave').hidden = true;
-  $('frame-help').hidden = true;
-  $('join').textContent = 'Start listening ↗';
+  document.body.classList.remove('is-listening');
+  $('audio-hint').hidden = true;
+  $('session-help').open = false;
   $('session-message').textContent = message;
-}
-
-function directLink(anchor, hall) {
-  anchor.href = hall.attendeeUrl;
-  // Same-tab navigation avoids leaving an embedded session playing behind a new tab.
-  anchor.addEventListener('click', () => disconnect('Interpretation closed here.'));
 }
 
 function selectHall(hall) {
@@ -53,17 +47,28 @@ function selectHall(hall) {
     button.querySelector('.indicator').textContent = active ? '✓' : '→';
   }
   $('session').hidden = false;
-  $('selected-hall').textContent = hall.name;
+  document.body.classList.add('has-hall');
+  document.querySelector('.intro').hidden = true;
+  document.querySelector('.audio-note').hidden = true;
+  document.querySelector('.chooser').hidden = true;
+  $('general-help').hidden = true;
+  $('programme').open = false;
+  $('session-programme').open = false;
+  $('session-title').textContent = hall.name;
   setProgrammeHall(hall.id);
   const canEmbed = config.mode === 'embed' && !!hall.embedUrl;
   $('embed-controls').hidden = !canEmbed;
   $('session-fallback').hidden = !hall.attendeeUrl;
   $('session-fallback').href = hall.attendeeUrl || '#';
-  $('session-fallback').setAttribute('aria-label', `Open listening page for ${hall.name}`);
+  $('session-fallback').setAttribute('aria-label', `Try the direct connection for ${hall.name}`);
+  $('direct-start').href = hall.attendeeUrl || '#';
+  $('direct-start').hidden = canEmbed || !hall.attendeeUrl;
+  $('reload').hidden = !canEmbed;
+  $('session-help').hidden = !hall.attendeeUrl;
   $('session-message').textContent = !hall.attendeeUrl
     ? 'This hall’s link is not available yet. Use the original interpretation QR code or ask the event team.'
-    : canEmbed ? 'Ready when you are. Tap Start listening, then enable audio.'
-      : 'Open the listening page to choose your language and listen.';
+    : canEmbed ? ''
+      : 'Choose your language and enable audio on the next page.';
 }
 
 function join() {
@@ -76,20 +81,18 @@ function join() {
   // Delegates playback permission, but does not start playback or bypass user gestures.
   frame.allow = 'autoplay';
   frame.src = embedSource(selected, language.value);
-  $('session-message').textContent = 'Opening your listening panel. Tap its audio control to listen.';
-  $('frame-help').hidden = false;
+  document.body.classList.add('is-listening');
+  $('audio-hint').hidden = false;
   $('leave').hidden = false;
-  $('join').textContent = 'Reload listening panel ↻';
-  // Cross-origin load/error events cannot establish session health. Keep fallback visible.
-  waitTimer = setTimeout(() => {
-    $('session-message').textContent = 'If captions or audio have not appeared, try Open listening page below, or ask the event team for help.';
-  }, 12000);
+  // Cross-origin content cannot report caption/audio health to the portal.
+  // Do not display a timeout warning while a working session may be playing.
   frame.addEventListener('error', () => {
-    clearTimeout(waitTimer);
-    $('session-message').textContent = 'The panel could not open. Try the listening page link below.';
+    $('session-message').textContent = 'The captions panel could not open. Try the direct connection in Help.';
+    $('session-help').open = true;
   });
   $('frame-container').append(frame);
-  frame.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+  $('session-title').focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function updateNetwork() {
@@ -100,17 +103,32 @@ function updateNetwork() {
 }
 
 $('join').addEventListener('click', join);
-$('leave').addEventListener('click', () => disconnect('You have left interpretation. Tap Start listening to return.'));
+$('reload').addEventListener('click', join);
+$('leave').addEventListener('click', () => {
+  disconnect();
+  $('join').focus();
+});
 language.addEventListener('change', () => {
-  disconnect('Language changed. Tap Start listening again, then enable audio.');
+  disconnect();
   updateQuickStart();
 });
 $('change-hall').addEventListener('click', () => {
-  disconnect('Choose your next hall above.');
+  disconnect();
+  selected = undefined;
+  $('session').hidden = true;
+  document.body.classList.remove('has-hall');
+  for (const selector of ['.intro', '.audio-note', '.chooser', '#general-help']) document.querySelector(selector).hidden = false;
+  document.querySelectorAll('.hall-choice').forEach(button => {
+    button.setAttribute('aria-pressed', 'false');
+    button.closest('.hall-card').classList.remove('selected');
+    button.querySelector('.indicator').textContent = '→';
+  });
   $('hall-heading').scrollIntoView({ block: 'start' });
   $('hall-heading').focus({ preventScroll: true });
 });
-$('session-fallback').addEventListener('click', () => disconnect('Interpretation closed here.'));
+for (const id of ['session-fallback', 'direct-start']) {
+  $(id).addEventListener('click', () => disconnect());
+}
 window.addEventListener('offline', updateNetwork);
 window.addEventListener('online', updateNetwork);
 window.addEventListener('pagehide', () => disconnect());
@@ -158,14 +176,7 @@ try {
     programme.dataset.scheduleHall = hall.id;
     programme.textContent = 'Checking the programme…';
     article.append(programme);
-    if (hall.attendeeUrl) {
-      const anchor = document.createElement('a');
-      anchor.className = 'fallback';
-      anchor.textContent = 'Open listening page ↗';
-      anchor.setAttribute('aria-label', `Open listening page for ${hall.name}`);
-      directLink(anchor, hall);
-      article.append(anchor);
-    } else {
+    if (!hall.attendeeUrl) {
       const text = document.createElement('p');
       text.className = 'unavailable';
       text.textContent = 'Link awaiting event team';
@@ -176,7 +187,7 @@ try {
   startProgramme(config.halls, hall => {
     selectHall(hall);
     $('session').scrollIntoView({ block: 'start' });
-    ($('embed-controls').hidden ? $('session-fallback') : $('join')).focus({ preventScroll: true });
+    ($('embed-controls').hidden ? $('direct-start') : $('join')).focus({ preventScroll: true });
   });
   const requested = config.halls.find(hall => hall.id === query.get('hall'));
   if (requested) selectHall(requested); // QR deep links select only; never auto-join.

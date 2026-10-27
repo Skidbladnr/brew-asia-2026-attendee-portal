@@ -2,20 +2,21 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 const config = JSON.parse(await readFile(new URL('../../public/config.json', import.meta.url)));
-const frameMock = '<!doctype html><html lang="en"><title>Simulated attendee frame</title><body><p>TEST ONLY — simulated Wordly response.</p><button>Enable audio (simulation)</button></body></html>';
+const frameMock = '<!doctype html><html lang="en"><meta charset="utf-8"><title>Simulated attendee frame</title><body><p>TEST ONLY — simulated Wordly response.</p><button>Enable audio (simulation)</button></body></html>';
 test.beforeEach(async ({ page }) => {
   // Never contact real event sessions during automated tests.
   await page.route('https://attend.wordly.ai/**', route => route.fulfill({ contentType: 'text/html', body: frameMock }));
 });
-const hall = (page, index = 0) => page.getByRole('button', { name: config.halls[index].name, exact: true });
+const hall = (page, index = 0) => page.locator(`[data-hall="${config.halls[index].id}"]`);
 
-test('landing has two direct links, no iframe and no external request before user joins', async ({ page }) => {
+test('landing has two hall choices without duplicate exit links or external requests', async ({ page }) => {
   let requests = 0;
   page.on('request', r => { if (r.url().startsWith('https://attend.wordly.ai')) requests++; });
   await page.goto('/');
   await expect(hall(page)).toBeVisible();
   await expect(page.locator('iframe')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: `Open listening page for ${config.halls[0].name}`, exact: true })).toHaveAttribute('href', config.halls[0].attendeeUrl);
+  await expect(page.locator('.hall-card a')).toHaveCount(0);
+  await expect(hall(page, 1)).toBeVisible();
   expect(requests).toBe(0);
 });
 
@@ -31,13 +32,17 @@ test('switching halls removes old context; rejoin uses only new session and lang
     window.frameObserver = new MutationObserver(() => window.maxFrames = Math.max(window.maxFrames, document.querySelectorAll('iframe').length));
     window.frameObserver.observe(document.body, { childList: true, subtree: true });
   });
+  await page.locator('#change-hall').click();
+  await expect(page.locator('#session')).toBeHidden();
   await hall(page, 1).click();
   await expect(page.locator('iframe')).toHaveCount(0);
   await page.locator('#join').click();
   await expect(page.locator('iframe')).toHaveAttribute('src', /XVCS-9354\?.*lang=ja/);
-  await page.locator('#join').click();
+  await page.locator('#session-help summary').click();
+  await page.locator('#reload').click();
   await expect(page.locator('iframe')).toHaveCount(1);
   expect(await page.evaluate(() => window.maxFrames)).toBe(1);
+  await page.locator('#session-help summary').click();
   await page.locator('#leave').click();
   await expect(page.locator('iframe')).toHaveCount(0);
 });
@@ -52,6 +57,9 @@ test('all five choices, changing language disconnects, no automatic playback', a
     await page.locator('#join').click();
     await expect(page.locator('iframe')).toHaveAttribute('src', new RegExp(`lang=${code}`));
     await expect(page.locator('iframe')).toHaveAttribute('allow', 'autoplay');
+    await expect(page.locator('#embed-controls')).toBeHidden();
+    await page.locator('#session-help summary').click();
+    await page.locator('#leave').click();
   }
 });
 
@@ -72,7 +80,8 @@ test('link-only switch never creates frames and direct links stay intact', async
   await page.goto('/');
   await hall(page).click();
   await expect(page.locator('#embed-controls')).toBeHidden();
-  await expect(page.locator('#session-fallback')).toHaveAttribute('href', config.halls[0].attendeeUrl);
+  await expect(page.locator('#direct-start')).toBeVisible();
+  await expect(page.locator('#direct-start')).toHaveAttribute('href', config.halls[0].attendeeUrl);
   await expect(page.locator('iframe')).toHaveCount(0);
 });
 
@@ -95,16 +104,16 @@ test('blank configuration displays honest missing-link guidance', async ({ page 
   await expect(page.locator('#embed-controls')).toBeHidden();
 });
 
-test('blocked iframe retains fallback and never claims to be live', async ({ page }) => {
+test('blocked iframe offers Help recovery without inventing session health', async ({ page }) => {
   await page.route('https://attend.wordly.ai/**', route => route.abort('blockedbyclient'));
+  await page.clock.install();
   await page.goto('/?hall=a');
   await page.locator('#join').click();
-  await expect(page.locator('#session-fallback')).toBeVisible();
-  await expect(page.locator('#session-message')).not.toContainText('Live');
-  await page.clock.install();
-  await page.locator('#join').click();
   await page.clock.fastForward(13000);
-  await expect(page.locator('#session-message')).toContainText('ask the event team');
+  await expect(page.locator('#session-message')).not.toContainText('Live');
+  await page.locator('#session-help').evaluate(el => el.open = true);
+  await expect(page.locator('#session-fallback')).toBeVisible();
+  await expect(page.locator('#session-fallback')).toHaveAttribute('href', config.halls[0].attendeeUrl);
 });
 
 test('QR parameters only select known hall/language; never accept a URL override', async ({ page }) => {
@@ -119,6 +128,7 @@ test('QR parameters only select known hall/language; never accept a URL override
 test('direct fallback navigates same tab and leaves no persistent session selection', async ({ page }) => {
   await page.goto('/?hall=a');
   await page.locator('#join').click();
+  await page.locator('#session-help summary').click();
   const link = page.locator('#session-fallback');
   expect(await link.getAttribute('target')).toBeNull();
   await link.click();
@@ -133,7 +143,7 @@ test('mobile/desktop layout and shell accessibility', async ({ page }) => {
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/?hall=a');
-    await expect(hall(page)).toBeVisible();
+    await expect(page.locator('#session-title')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator('#join').click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -191,6 +201,7 @@ test('schedule failure leaves listening controls and direct fallback usable', as
   await expect(page.locator('[data-schedule-hall="a"]')).toContainText('Programme unavailable');
   await page.locator('#join').click();
   await expect(page.locator('iframe')).toHaveCount(1);
+  await page.locator('#session-help summary').click();
   await expect(page.locator('#session-fallback')).toBeVisible();
 });
 
@@ -226,4 +237,34 @@ test('GitHub Pages-style project subdirectory loads local branding, schedule and
   await expect(page.locator('iframe')).toHaveAttribute('src', /XVCS-9354\?.*lang=ja/);
   await expect(page.locator('iframe')).toHaveCount(1);
   expect(failures).toEqual([]);
+});
+
+
+test('active phone view puts the complete frame before help and schedule', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/?hall=a&lang=ja');
+  await expect(page.locator('.chooser')).toBeHidden();
+  await page.locator('#join').click();
+  await expect(page.locator('#embed-controls')).toBeHidden();
+  await expect(page.locator('#session-fallback')).toBeHidden();
+  await expect(page.locator('#selected-programme')).toBeHidden();
+  for (const width of [320, 390]) {
+    for (const room of ['a', 'b']) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto(`/?hall=${room}&lang=ja`);
+      await page.locator('#join').click();
+      const rect = await page.locator('iframe').boundingBox();
+      expect(rect.y).toBeLessThan(220);
+      expect(rect.y + rect.height).toBeLessThanOrEqual(844);
+    }
+  }
+  await page.clock.install();
+  await page.clock.fastForward(20000);
+  await expect(page.locator('#session-message')).toBeEmpty();
+  await page.screenshot({ path: 'docs/listening-preview.png', fullPage: false, scale: 'css' });
+  await page.locator('#change-hall').click();
+  await expect(page.locator('iframe')).toHaveCount(0);
+  await expect(hall(page)).toBeVisible();
+  await expect(hall(page, 1)).toBeVisible();
+  await expect(page.locator('#hall-heading')).toBeFocused();
 });

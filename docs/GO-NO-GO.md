@@ -4,8 +4,9 @@
 
 - [x] Both official attendee/embed pairs supplied and configured; session IDs differ and pairs match.
 - [x] Documented Wordly parameters verified; static build and automated portal checks pass.
-- [x] Direct links remain prominent; links-only mode is available.
+- [x] Each selected hall retains a direct connection under Help; links-only mode provides a primary direct action.
 - [x] Display names reconciled to the official programme: Barth Haas Hall and Joe White Maltings Hall.
+- [x] Owner supplied iPhone evidence of working Japanese captions in Barth Haas on the preceding release.
 - [ ] Match both names to physical signage; do not assume an A/B mapping.
 - [ ] Organizer checks the imported timetable against last-minute changes and names a person to communicate delays or corrections.
 - [ ] Confirm both supplied sessions cover October 28 **and** 29, or provide the day/session change schedule and replacement URL pairs.

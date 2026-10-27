@@ -44,20 +44,28 @@
     <p id="programme-disclaimer" class="small">Scheduled times · Ho Chi Minh City (UTC+7). Sessions may run late.</p>
     </section>
     <section id="session" class="session" aria-labelledby="session-title" hidden>
-      <div class="section-heading"><h2 id="session-title" tabindex="-1">Your interpretation</h2><button id="change-hall" class="text-button" type="button">Change hall</button></div>
-      <p id="selected-hall" class="selected-hall"></p>
-      <div id="selected-programme" class="selected-programme" aria-live="polite"></div>
+      <div class="session-screen">
+      <div class="section-heading"><h1 id="session-title" tabindex="-1"></h1><button id="change-hall" class="text-button" type="button">Change hall</button></div>
       <div id="embed-controls">
-        <label for="language">Start in your language</label>
-        <div class="join-controls"><select id="language" aria-describedby="language-help"></select><button id="join" class="primary" type="button">Start listening <span aria-hidden="true">↗</span></button></div>
-        <p id="language-help" class="small">Changing this selection disconnects the current view. Tap Start listening again, then enable audio.</p>
+        <label for="language">Choose your language</label>
+        <div class="join-controls"><select id="language"></select><button id="join" class="primary" type="button">Start listening</button></div>
         <p id="native-help" class="native-help"></p>
       </div>
-      <div class="session-bar"><p id="session-message" role="status" aria-live="polite"></p><button id="leave" class="text-button" type="button" hidden>Leave interpretation</button></div>
+      <p id="session-message" class="session-message" role="status" aria-live="polite"></p>
+      <p id="audio-hint" class="small" hidden>Use headphones. Tap the audio control below to listen.</p>
       <div id="frame-container"></div>
-      <p id="frame-help" class="small" hidden>Blank panel or no sound? Try “Open listening page” below.</p>
-      <a id="session-fallback" class="fallback prominent" href="#">Open listening page <span aria-hidden="true">↗</span></a>
-      <p class="small">Opens in this tab. Choose your language and enable audio there. Use your browser’s Back button to return.</p>
+      </div>
+      <a id="direct-start" class="primary direct-start" href="#" hidden>Continue to interpretation <span aria-hidden="true">↗</span></a>
+      <details id="session-help" class="help session-help">
+        <summary>Help with audio &amp; captions</summary>
+        <div>
+          <p>Connect headphones, check your media volume and tap the audio control inside the captions panel. Choose a different language in that panel’s menu.</p>
+          <p>If the panel is blank, check your connection, then try reloading it. You may need to enable audio again after locking your phone.</p>
+          <div class="recovery-actions"><button id="reload" class="text-button" type="button">Reload captions</button><button id="leave" class="text-button" type="button" hidden>Stop listening</button><a id="session-fallback" class="fallback" href="#">Try the direct connection ↗</a></div>
+          <p class="small">The direct connection opens in this tab. If it still does not work, ask the event team or use the original hall QR code.</p>
+        </div>
+      </details>
+      <details id="session-programme" class="session-programme"><summary>In this hall · scheduled programme</summary><div id="selected-programme" aria-live="polite"></div></details>
     </section>
     <details id="programme" class="programme">
       <summary><span>Conference programme</span><span class="small">28–29 October</span></summary>
@@ -69,7 +77,7 @@
         <a class="source-link" href="https://www.brew-asia.com/conference" target="_blank" rel="noopener noreferrer">Official conference programme <span aria-hidden="true">↗</span></a>
       </div>
     </details>
-    <details class="help"><summary>Help with audio &amp; captions</summary><div><p><strong>No sound?</strong> Connect headphones, check your phone’s media volume and tap the audio control in the listening panel. Returning from a locked screen may require another tap.</p><p><strong>Blank or disconnected?</strong> Check your internet connection. Try “Open listening page” for your hall, or use the original interpretation QR code.</p><p><strong>Changing rooms?</strong> Select the other hall here. Close any separate listening tabs that are still playing.</p><p>If you still need help, ask the event team. Captions and audio depend on the hall’s interpretation feed and your internet connection.</p></div></details>
+    <details id="general-help" class="help"><summary>Help with audio &amp; captions</summary><div><p><strong>No sound?</strong> Connect headphones, check your phone’s media volume and tap the audio control in the listening panel. Returning from a locked screen may require another tap.</p><p><strong>Blank or disconnected?</strong> Check your internet connection. Select your hall and open Help for a direct connection, or use the original interpretation QR code.</p><p><strong>Changing rooms?</strong> Select the other hall here. Close any separate listening tabs that are still playing.</p><p>If you still need help, ask the event team. Captions and audio depend on the hall’s interpretation feed and your internet connection.</p></div></details>
   </main>
   <footer><span>Brew Asia 2026</span><a href="https://asiabrewersnetwork.com/" target="_blank" rel="noopener noreferrer">Asia Brewers Network <span aria-hidden="true">↗</span></a></footer>
 </body>

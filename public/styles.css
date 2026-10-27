@@ -161,3 +161,52 @@ footer a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px
   .primary, .prominent { border: 2px solid ButtonText; }
   .event-logo, .hall-logo { mix-blend-mode: normal; }
 }
+
+/* Focused hall view: keep captions and their own controls together. */
+.hall-card { background: linear-gradient(155deg, #fffdf8 70%, var(--tint)); }
+.hall-programme { padding-bottom: 16px; }
+.intro .language-line { margin-top: 10px; }
+.audio-note { margin-top: 6px; }
+.chooser { margin-top: 10px; padding-top: 14px; }
+.has-hall .masthead { padding-top: 10px; padding-bottom: 10px; gap: 12px; }
+.has-hall .event-logo { width: 44px; }
+.has-hall .event-location { font-size: 10px; }
+.has-hall .event-location strong { font-size: 16px; }
+.has-hall .event-location span:last-child, .has-hall .brew-motif { display: none; }
+.has-hall main { padding-top: 12px; }
+.session { margin-top: 0; padding-top: 0; border-top: 0; }
+.session .section-heading { align-items: center; margin-bottom: 12px; }
+#session-title { font: 500 26px/1.15 var(--display); color: var(--ink); }
+#change-hall { font-size: 12px; padding: 8px 0 8px 8px; }
+#embed-controls { padding-top: 8px; }
+#native-help { font-size: 13px; line-height: 1.5; margin-top: 12px; }
+.session-message { font-size: 13px; line-height: 1.5; }
+.session-message:not(:empty) { margin: 12px 0; }
+#session-message:empty { display: none; }
+#audio-hint { margin: 0 0 10px; font-size: 12px; }
+.is-listening #embed-controls { display: none; }
+.wordly-frame { margin-top: 0; height: calc(100svh - 205px); min-height: 280px; max-height: 800px; border-radius: 5px; }
+.session-help { margin-top: 16px; border-top: 1px solid var(--line); }
+.recovery-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 8px 0 !important; }
+.recovery-actions .text-button, .recovery-actions .fallback { font-size: 13px; padding: 8px 0; min-height: 44px; }
+.direct-start { text-decoration: none; margin: 16px 0; }
+.session-programme { border-bottom: 1px solid var(--line); font-size: 13px; }
+.session-programme summary { cursor: pointer; padding: 16px 0; min-height: 48px; }
+#selected-programme { padding-bottom: 16px; }
+.has-hall .programme { margin-top: 0; border-top: 0; }
+@media (max-width: 600px) {
+  .masthead { padding: 10px 18px; }
+  .event-logo { width: 70px; }
+  main { padding-top: 17px; }
+  .audio-note { margin-top: 4px; padding-bottom: 8px; }
+  .chooser { margin-top: 10px; }
+  .has-hall main { padding: 10px 14px 14px; }
+  .has-hall .masthead { padding: 8px 14px; }
+  #session-title { font-size: 24px; }
+  .session .section-heading { gap: 10px; flex-wrap: nowrap; }
+  .wordly-frame { height: calc(100svh - 190px); }
+}
+
+.is-listening .session-screen { height: calc(100svh - 84px); min-height: 420px; max-height: 1000px; display: flex; flex-direction: column; }
+.is-listening #frame-container { flex: 1; min-height: 0; }
+.is-listening .wordly-frame { height: 100%; min-height: 0; max-height: none; }

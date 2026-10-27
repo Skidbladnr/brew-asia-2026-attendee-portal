@@ -1,6 +1,6 @@
 # Brew Asia 2026 attendee interpretation portal
 
-Independent, mobile-first static portal for The ADORA, Ho Chi Minh City, 28–29 October 2026. Prepared on 27 October. No backend, authentication, framework, analytics, remotely loaded fonts, service worker, or runtime package dependencies. **Prepared for controlled phone testing. Attendee rollout has not been accepted on real phones in the two halls.**
+Independent, mobile-first static portal for The ADORA, Ho Chi Minh City, 28–29 October 2026. Prepared on 27 October. No backend, authentication, framework, analytics, remotely loaded fonts, service worker, or runtime package dependencies. **Prepared for controlled phone testing. The owner has shown working Japanese captions on an iPhone; full real-phone acceptance in both halls is still pending.**
 
 Live test site: https://skidbladnr.github.io/brew-asia-2026-attendee-portal/
 
@@ -17,7 +17,7 @@ The organizer-supplied pairs are in `public/config.json`:
 
 Hall spelling now follows the official conference programme, checked on 27 October 2026. Internal IDs `a` and `b` are only navigation keys; they do not assert an official Hall A/B signage mapping. Confirm physical signage and whether these interpretation sessions remain valid on both dates. No presenter links or settings are used.
 
-## Event identity and programme (v1.3)
+## Event identity and programme (v1.4)
 
 The design uses the official public Brew Asia 2026 event mark and hall logos, restrained event colors, medium-weight event headings, system body text and compact hall cards. Warm paper tones, subtle hall tints and a desktop brewing illustration retain the event identity. Promotional slogans have been removed; instructions describe what attendees need to do. Asset provenance is in `docs/BRAND-SOURCES.md`. All design assets load from the portal itself.
 
@@ -25,7 +25,7 @@ The hall cards show **Scheduled now** and **Next**, derived from `public/schedul
 
 Schedule state is recomputed every 30 seconds and on return to the page without reloading the listening iframe. Timetable edits require changing `public/schedule.json`, rebuilding and deploying through the approved process. An already-open tab must reload to fetch changed timetable data; do that between sessions because it also stops listening. A failed timetable fetch leaves interpretation controls usable. See `docs/PROGRAMME-SOURCES.md` for the hall mapping and source decisions.
 
-The outer attendee interface omits the service/vendor name. Its fallback says “Open listening page”; underlying official URLs and iframe behavior are unchanged. The provider may still show its own name inside the frame or direct page. Native-language audio-start prompts are included for all five output languages; the rest of the shell and agenda remain English.
+The outer attendee interface omits the service/vendor name. A direct-connection fallback is available inside the selected hall’s Help section. Repeated direct links have been removed from the hall cards at the owner’s request; underlying official URLs and iframe behavior are unchanged. The provider may still show its own name inside the frame or direct page. Native-language audio-start prompts are included for all five output languages; the rest of the shell and agenda remain English.
 
 ## Run and build
 
@@ -69,7 +69,9 @@ Edit `public/config.json`, then rebuild. `config.example.json` is an empty, port
 - Duplicate hall session IDs fail closed. Unknown origins, presenter paths and undocumented iframe parameters are rejected. If Wordly supplies a new URL format, verify its official documentation before adjusting the validator.
 - Direct attendee URLs are preserved. Language/display parameters are applied only to iframe URLs; attendees select their language inside Wordly when using a direct link.
 
-Only one iframe exists at a time. Selecting any hall, changing the outer language selector, leaving, going offline, or navigating away removes the old iframe. Starting/reloading requires a tap. Changing the outer language selector resets the embedded view; it does not remotely manipulate Wordly controls. Audio still requires Wordly’s own user gesture. Separate browser tabs and other devices cannot be controlled by this portal.
+Selecting a hall opens a focused setup view. Starting hides the outer language setup, leaving the hall name, Change hall, a short audio instruction and the captions frame. Use the provider’s internal language control while listening. Programme details and recovery controls sit below the frame. Help contains Reload captions, Stop listening and Try the direct connection. Reload uses the original setup language; an in-frame language change cannot be read by the wrapper.
+
+Only one iframe exists at a time. Change hall, Stop listening, going offline, or navigating away removes the old iframe. Starting/reloading requires a tap. Stop listening returns to setup, where a different starting language can be chosen. Audio still requires Wordly’s own user gesture. Separate browser tabs and other devices cannot be controlled by this portal.
 
 The page stores no selection or transcript in local storage, cookies, or a backend. Wordly operates its own cross-origin session and storage. The portal cannot inspect captions, confirm a broadcast, or guarantee provider-side session isolation. Visible messages describe browser actions, not invented live status.
 
@@ -99,7 +101,8 @@ Optional test deep links on that same root are `?hall=a&lang=vi` and `?hall=b&la
 - `docs/WORDLY.md`: documented integration contract and limitations.
 - `docs/TEST-RESULTS.md`: completed evidence and untested risks.
 - `docs/phone-preview.jpg`: first mobile viewport at 390 × 844 CSS pixels.
-- `docs/desktop-preview.jpg`: desktop design capture.
+- `docs/desktop-preview.jpg`: desktop hall chooser.
+- `docs/listening-preview.png`: active mobile layout with a visibly simulated provider response; not a live-feed capture.
 - `docs/mobile-preview.png`: captured portal landing page on preparation day.
 - `docs/schedule-preview.png`: a **simulated 28 October, 11:10** timetable view for design review; not evidence of a live broadcast.
 

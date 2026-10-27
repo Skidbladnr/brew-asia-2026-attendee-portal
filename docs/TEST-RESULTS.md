@@ -23,7 +23,7 @@ An initial run against the machine’s newer installed Chrome passed all asserti
 
 Programme tests cover Vietnam time, exact start/end boundaries, gaps, shared activities, the overnight transition, completed conference state, schedule-fetch failure, date/hall filters and keeping the same iframe during a timetable transition. A native-language instruction appears for each selected output language.
 
-The browser’s online hint cannot detect every outage. Cross-origin iframe failures may not emit useful error events; the direct fallback remains visible regardless. A fresh offline page load cannot work without internet. The portal removes its own iframe on switching but cannot silence a separate browser tab or another device.
+The browser’s online hint cannot detect every outage. Cross-origin iframe failures may not emit useful error events; the selected hall’s Help section keeps the direct fallback available. A fresh offline page load cannot work without internet. The portal removes its own iframe on switching but cannot silence a separate browser tab or another device.
 
 No presenter MacBook, cellular router, production feed, official QR code or Wordly account setting was modified. A new independent GitHub Pages deployment was created with the owner’s authorization. Research used public Wordly documentation, official event/programme/branding pages and GitHub documentation; no private event account was accessed. URLs supplied by the user were validated locally.
 
@@ -46,3 +46,14 @@ Revision 1.3: warmer event styling restored without slogans; unit tests (14) and
 - The final QR PNG and all four QR codes in the rendered A4 PDF decoded to that exact HTTPS address. The PDF was visually reviewed. Software decoding does not prove camera scanning of the printed sheet.
 - An initial local QR decode failed because the sandbox could not initialize the native image decoder; the permitted local decoder run succeeded. PDF rendering succeeded with a local font cache.
 - The site source is public. A scan found no known credential signatures or presenter passcodes in the release; event programme and attendee session URLs are intentionally public.
+
+
+## Revision 1.4 — focused listening view, 28 October
+
+The owner reported working interpretation and supplied iPhone screenshots showing Japanese captions in Barth Haas. This is real-device evidence for that caption path on the earlier release; audio, Joe White, simultaneous halls and the revised layout remain to be accepted.
+
+The hall chooser no longer repeats direct links. Selection replaces the chooser with language setup. Starting hides setup and places the frame immediately beneath the hall name and audio hint. Change hall tears down the frame and restores the chooser. Reload, stop and direct recovery are under Help; the selected programme is collapsed below the frame. The unconditional 12-second warning has been removed because elapsed time cannot indicate provider failure.
+
+Validation: 14 unit tests and 18 browser tests, including focused-view layout, frame teardown, fallback recovery, no unsolicited timeout warning and frame bounds for both hall names at 320/390 widths. The shell accessibility and wider layout tests remain included. Provider responses in browser tests are simulated. A screenshot of the active test layout is labelled as a simulated provider response.
+
+Initial local test attempts required loopback permission and the already downloaded matching Chromium path; an outdated test locator for hidden hall controls was corrected before the final suite. These were tooling/test issues, not a live-provider test.
