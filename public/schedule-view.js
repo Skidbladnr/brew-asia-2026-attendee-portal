@@ -1,6 +1,6 @@
 import { normalizeSchedule, hallSchedule, eventDay, eventTime, defaultDay, dayLabel } from './schedule-core.js';
 const $ = id => document.getElementById(id);
-let schedule, halls = [], chosenHall, choose, selectedDay = defaultDay(), agendaSignature = '';
+let schedule, scheduleFailed = false, halls = [], chosenHall, choose, selectedDay = defaultDay(), agendaSignature = '';
 function text(tag, content, className = '') {
   const element = document.createElement(tag);
   element.textContent = content;
@@ -30,6 +30,21 @@ function summary(hall, now) {
   }
   return group;
 }
+function compactSummary(hall, now) {
+  const { current, next, shared, ended } = hallSchedule(schedule, hall, now);
+  const group = document.createElement('div');
+  const item = current || next;
+  if (item) {
+    group.append(text('p', `${current ? 'Scheduled now' : 'Up next'} · ${timeRange(item, now)}`, 'schedule-label'));
+    group.append(text('p', item.title, 'schedule-title'));
+    if (item.speaker) group.append(text('p', item.speaker, 'schedule-speaker'));
+    if (current && next) group.append(text('p', `Up next · ${timeRange(next, now)} · ${next.title}`, 'context-next'));
+  } else {
+    group.append(text('p', ended ? 'Hall programme complete' : shared ? shared.title : 'No session scheduled now', 'schedule-label quiet'));
+    group.append(text('p', 'See the conference programme below.', 'schedule-speaker'));
+  }
+  return group;
+}
 function replaceIfChanged(target, content) {
   if (target.textContent !== content.textContent) target.replaceChildren(content);
 }
@@ -49,19 +64,36 @@ function renderAgenda(now) {
     row.className = item.hall === null ? 'agenda-entry shared-entry' : `agenda-entry hall-${item.hall}`;
     const isCurrent = Date.parse(item.start) <= +now && +now < Date.parse(item.end);
     if (isCurrent) row.classList.add('scheduled-current');
-    row.append(text('p', `${eventTime(item.start)}–${eventTime(item.end)}${isCurrent ? ' · Scheduled now' : ''}`, 'agenda-time'));
+    const times = document.createElement('div');
+    times.className = 'agenda-time';
+    const start = text('time', eventTime(item.start), 'agenda-start');
+    start.dateTime = item.start;
+    const end = text('time', eventTime(item.end), 'agenda-end');
+    end.dateTime = item.end;
+    times.append(start, text('span', '–', 'time-separator'), end);
+    const content = document.createElement('div');
+    content.className = 'agenda-content';
     const location = item.hall === null ? item.location || 'Shared programme' : halls.find(h => h.id === item.hall).name;
-    row.append(text('p', `${location}${item.kind ? ' · ' + item.kind : ''}`, 'agenda-location'));
-    row.append(text('h3', item.title));
-    if (item.speaker) row.append(text('p', item.speaker, 'schedule-speaker'));
-    if (item.note) row.append(text('p', item.note, 'agenda-note'));
+    const meta = document.createElement('div');
+    meta.className = 'agenda-meta';
+    meta.append(text('p', location, 'agenda-location'));
+    if (isCurrent) meta.append(text('span', 'Scheduled now', 'agenda-current'));
+    content.append(meta);
+    content.append(text('h3', item.title));
+    if (item.speaker) content.append(text('p', item.speaker, 'schedule-speaker'));
+    if (item.note) content.append(text('p', item.note, 'agenda-note'));
+    const foot = document.createElement('div');
+    foot.className = 'agenda-foot';
+    if (item.kind && item.hall !== null) foot.append(text('span', item.kind, 'agenda-kind'));
     if (item.hall !== null) {
-      const button = text('button', 'Choose this hall →', 'agenda-choose');
+      const button = text('button', 'Listen in this hall →', 'agenda-choose');
       button.type = 'button';
       button.setAttribute('aria-label', `Choose ${location} for ${item.title}`);
       button.addEventListener('click', () => choose(halls.find(h => h.id === item.hall)));
-      row.append(button);
+      foot.append(button);
     }
+    if (foot.childNodes.length) content.append(foot);
+    row.append(times, content);
     list.append(row);
   }
   $('programme-list').replaceChildren(list);
@@ -69,12 +101,15 @@ function renderAgenda(now) {
 function refresh() {
   const now = new Date();
   $('programme-clock').textContent = `${dayLabel(eventDay(now))} · ${eventTime(now)} in Ho Chi Minh City`;
-  if (!schedule) return;
+  if (!schedule) {
+    if (chosenHall) $('selected-programme').textContent = scheduleFailed ? 'Programme unavailable. You can still listen.' : 'Programme loading…';
+    return;
+  }
   for (const hall of halls) {
     const target = document.querySelector(`[data-schedule-hall="${hall.id}"]`);
     if (target) replaceIfChanged(target, summary(hall.id, now));
   }
-  if (chosenHall) replaceIfChanged($('selected-programme'), summary(chosenHall, now));
+  if (chosenHall) replaceIfChanged($('selected-programme'), compactSummary(chosenHall, now));
   renderAgenda(now);
 }
 export function setProgrammeHall(id) { chosenHall = id; refresh(); }
@@ -105,6 +140,8 @@ export async function startProgramme(configuredHalls, onChoose) {
     document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
     window.addEventListener('pageshow', refresh);
   } catch {
+    scheduleFailed = true;
+    refresh();
     document.querySelectorAll('[data-schedule-hall]').forEach(node => { node.textContent = 'Programme unavailable. You can still choose this hall to listen.'; });
     $('programme-list').replaceChildren(text('p', 'The timetable could not load. Check the official programme below or ask the event team.', 'notice'));
   }

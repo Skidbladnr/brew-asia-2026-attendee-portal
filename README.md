@@ -17,7 +17,7 @@ The organizer-supplied pairs are in `public/config.json`:
 
 Hall spelling now follows the official conference programme, checked on 27 October 2026. Internal IDs `a` and `b` are only navigation keys; they do not assert an official Hall A/B signage mapping. Confirm physical signage and whether these interpretation sessions remain valid on both dates. No presenter links or settings are used.
 
-## Event identity and programme (v1.4)
+## Event identity and programme (v1.5)
 
 The design uses the official public Brew Asia 2026 event mark and hall logos, restrained event colors, medium-weight event headings, system body text and compact hall cards. Warm paper tones, subtle hall tints and a desktop brewing illustration retain the event identity. Promotional slogans have been removed; instructions describe what attendees need to do. Asset provenance is in `docs/BRAND-SOURCES.md`. All design assets load from the portal itself.
 
@@ -69,7 +69,7 @@ Edit `public/config.json`, then rebuild. `config.example.json` is an empty, port
 - Duplicate hall session IDs fail closed. Unknown origins, presenter paths and undocumented iframe parameters are rejected. If Wordly supplies a new URL format, verify its official documentation before adjusting the validator.
 - Direct attendee URLs are preserved. Language/display parameters are applied only to iframe URLs; attendees select their language inside Wordly when using a direct link.
 
-Selecting a hall opens a focused setup view. Starting hides the outer language setup, leaving the hall name, Change hall, a short audio instruction and the captions frame. Use the provider’s internal language control while listening. Programme details and recovery controls sit below the frame. Help contains Reload captions, Stop listening and Try the direct connection. Reload uses the original setup language; an in-frame language change cannot be read by the wrapper.
+Selecting a hall opens a focused setup view. Starting hides the outer language setup, leaving the hall name, Change hall, a short audio instruction and the captions frame. Use the provider’s internal language control while listening. Before listening, a compact scheduled-now/up-next summary sits below the hall title and above language selection. It hides during listening; the full programme and recovery controls remain below the frame. The agenda uses aligned times, hall-coloured session panels, lighter shared-event entries and date tabs. Help contains Reload captions, Stop listening and Try the direct connection. Reload uses the original setup language; an in-frame language change cannot be read by the wrapper.
 
 Only one iframe exists at a time. Change hall, Stop listening, going offline, or navigating away removes the old iframe. Starting/reloading requires a tap. Stop listening returns to setup, where a different starting language can be chosen. Audio still requires Wordly’s own user gesture. Separate browser tabs and other devices cannot be controlled by this portal.
 
@@ -102,6 +102,7 @@ Optional test deep links on that same root are `?hall=a&lang=vi` and `?hall=b&la
 - `docs/TEST-RESULTS.md`: completed evidence and untested risks.
 - `docs/phone-preview.jpg`: first mobile viewport at 390 × 844 CSS pixels.
 - `docs/desktop-preview.jpg`: desktop hall chooser.
+- `docs/programme-preview.png`: expanded programme with a simulated event clock.
 - `docs/listening-preview.png`: active mobile layout with a visibly simulated provider response; not a live-feed capture.
 - `docs/mobile-preview.png`: captured portal landing page on preparation day.
 - `docs/schedule-preview.png`: a **simulated 28 October, 11:10** timetable view for design review; not evidence of a live broadcast.

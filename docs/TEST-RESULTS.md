@@ -59,3 +59,9 @@ Validation: 14 unit tests and 18 browser tests, including focused-view layout, f
 Initial local test attempts required loopback permission and the already downloaded matching Chromium path; an outdated test locator for hidden hall controls was corrected before the final suite. These were tooling/test issues, not a live-provider test.
 
 Revision 1.4 deployed successfully through GitHub Actions run 40547506488 from commit `911dfa2693bba1553a0974f99ac7276a850b2642`. The final browser suite completed with 18 passes in 3.4 seconds; the unit suite passed all 14 checks.
+
+## Revision 1.5 — hall context and programme polish, 28 October
+
+The selected hall’s compact scheduled-now/up-next summary now appears beneath its title and above the language selector. The redundant collapsed hall summary has been removed; starting still hides the summary to preserve caption space. Time and schedule state remain timetable-derived, not broadcast detection.
+
+The agenda now separates start/end times from session content, uses the established hall colours, refines date tabs, and treats shared activities more quietly. Date and hall filtering, workshop notes, correct room selection, keyboard focus and current-session highlighting remain intact. The expanded programme was checked at 320, 390, 768 and 1440 widths and with automated accessibility checks. Tests also check summary placement, exact schedule-boundary updates and preservation of the active iframe. All 14 unit and 18 browser checks pass; the provider frame is simulated. Real-device acceptance of this revision remains pending.

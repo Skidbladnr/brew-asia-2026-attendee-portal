@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
   // Never contact real event sessions during automated tests.
   await page.route('https://attend.wordly.ai/**', route => route.fulfill({ contentType: 'text/html', body: frameMock }));
 });
-const hall = (page, index = 0) => page.locator(`[data-hall="${config.halls[index].id}"]`);
+const hall = (page, index = 0) => page.locator(`.hall-choice[data-hall="${config.halls[index].id}"]`);
 
 test('landing has two hall choices without duplicate exit links or external requests', async ({ page }) => {
   let requests = 0;
@@ -171,11 +171,20 @@ test('programme shows current and next by Vietnam time without reloading active 
   await page.goto('/?hall=a');
   await expect(page.locator('[data-schedule-hall="a"]')).toContainText('AI for brewery marketing');
   await expect(page.locator('[data-schedule-hall="b"]')).toContainText('Inside Czech lager brewing');
+  await expect(page.locator('#selected-programme')).toContainText('Scheduled now');
+  await expect(page.locator('#selected-programme')).toContainText('AI for brewery marketing');
+  const title = await page.locator('#session-title').boundingBox();
+  const summary = await page.locator('#selected-programme').boundingBox();
+  const language = await page.locator('#language').boundingBox();
+  expect(summary.y).toBeGreaterThan(title.y + title.height);
+  expect(summary.y + summary.height).toBeLessThan(language.y);
   await page.locator('#join').click();
   await page.locator('iframe').evaluate(frame => frame.dataset.identity = 'keep-this-frame');
   await page.clock.fastForward(60000);
   await expect(page.locator('[data-schedule-hall="a"]')).toContainText('No hall session scheduled now');
   await expect(page.locator('[data-schedule-hall="a"]')).toContainText('Hop aroma: field to glass');
+  await expect(page.locator('#selected-programme')).toContainText('Up next');
+  await expect(page.locator('#selected-programme')).toContainText('Hop aroma: field to glass');
   await expect(page.locator('iframe')).toHaveAttribute('data-identity', 'keep-this-frame');
   await expect(page.locator('iframe')).toHaveCount(1);
 });
@@ -217,8 +226,10 @@ test('attendee shell omits vendor names and expanded programme remains accessibl
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
-  await page.locator('#programme summary').click();
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('#programme').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: 'docs/programme-preview.png', fullPage: true, scale: 'css' });
+  await page.locator('#programme summary').click();
   await page.goto('/');
   await expect(page.locator('[data-schedule-hall="a"]')).toContainText('Scheduled now');
   await page.screenshot({ path: 'docs/schedule-preview.png', fullPage: true, scale: 'css' });

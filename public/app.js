@@ -53,7 +53,7 @@ function selectHall(hall) {
   document.querySelector('.chooser').hidden = true;
   $('general-help').hidden = true;
   $('programme').open = false;
-  $('session-programme').open = false;
+  $('selected-programme').dataset.hall = hall.id;
   $('session-title').textContent = hall.name;
   setProgrammeHall(hall.id);
   const canEmbed = config.mode === 'embed' && !!hall.embedUrl;

@@ -46,6 +46,7 @@
     <section id="session" class="session" aria-labelledby="session-title" hidden>
       <div class="session-screen">
       <div class="section-heading"><h1 id="session-title" tabindex="-1"></h1><button id="change-hall" class="text-button" type="button">Change hall</button></div>
+      <div id="selected-programme" class="session-context" aria-live="polite"></div>
       <div id="embed-controls">
         <label for="language">Choose your language</label>
         <div class="join-controls"><select id="language"></select><button id="join" class="primary" type="button">Start listening</button></div>
@@ -65,16 +66,15 @@
           <p class="small">The direct connection opens in this tab. If it still does not work, ask the event team or use the original hall QR code.</p>
         </div>
       </details>
-      <details id="session-programme" class="session-programme"><summary>In this hall · scheduled programme</summary><div id="selected-programme" aria-live="polite"></div></details>
     </section>
     <details id="programme" class="programme">
-      <summary><span>Conference programme</span><span class="small">28–29 October</span></summary>
+      <summary><span class="programme-heading">Conference programme<span class="programme-subtitle">28–29 October · The ADORA Centre</span></span><span class="programme-toggle" aria-hidden="true"></span></summary>
       <div class="programme-body">
-        <div class="day-picker" role="group" aria-label="Programme date"><button type="button" data-day="2026-10-28" aria-pressed="true">Wed 28 Oct</button><button type="button" data-day="2026-10-29" aria-pressed="false">Thu 29 Oct</button></div>
-        <label for="programme-hall">Show sessions</label><select id="programme-hall"><option value="all">Both halls &amp; shared activities</option></select>
-        <p class="small">Times are local to Ho Chi Minh City. Short titles are used here; see the official programme for full descriptions.</p>
+        <div class="day-picker" role="group" aria-label="Programme date"><button type="button" data-day="2026-10-28" aria-pressed="true"><span class="day-number">28</span><span class="day-name">Wednesday<span>October</span></span></button><button type="button" data-day="2026-10-29" aria-pressed="false"><span class="day-number">29</span><span class="day-name">Thursday<span>October</span></span></button></div>
+        <label for="programme-hall">Programme by hall</label><select id="programme-hall"><option value="all">All halls &amp; shared activities</option></select>
+        <p class="small">Ho Chi Minh City time (UTC+7) · Timings may change.</p>
         <div id="programme-list"><p class="small">Loading the programme…</p></div>
-        <a class="source-link" href="https://www.brew-asia.com/conference" target="_blank" rel="noopener noreferrer">Official conference programme <span aria-hidden="true">↗</span></a>
+        <a class="source-link" href="https://www.brew-asia.com/conference" target="_blank" rel="noopener noreferrer">Full session descriptions <span aria-hidden="true">↗</span></a>
       </div>
     </details>
     <details id="general-help" class="help"><summary>Help with audio &amp; captions</summary><div><p><strong>No sound?</strong> Connect headphones, check your phone’s media volume and tap the audio control in the listening panel. Returning from a locked screen may require another tap.</p><p><strong>Blank or disconnected?</strong> Check your internet connection. Select your hall and open Help for a direct connection, or use the original interpretation QR code.</p><p><strong>Changing rooms?</strong> Select the other hall here. Close any separate listening tabs that are still playing.</p><p>If you still need help, ask the event team. Captions and audio depend on the hall’s interpretation feed and your internet connection.</p></div></details>
