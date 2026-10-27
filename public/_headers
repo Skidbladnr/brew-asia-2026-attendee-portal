@@ -1,0 +1,6 @@
+/*
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Permissions-Policy: microphone=(), camera=(), geolocation=(), autoplay=(self "https://attend.wordly.ai")
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src https://attend.wordly.ai; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'

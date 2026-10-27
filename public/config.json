@@ -1,0 +1,17 @@
+{
+  "mode": "embed",
+  "halls": [
+    {
+      "id": "a",
+      "name": "Barth Haas Hall",
+      "attendeeUrl": "https://attend.wordly.ai/join/UAFJ-4373",
+      "embedUrl": "https://attend.wordly.ai/frame/UAFJ-4373"
+    },
+    {
+      "id": "b",
+      "name": "Joe White Maltings Hall",
+      "attendeeUrl": "https://attend.wordly.ai/join/XVCS-9354",
+      "embedUrl": "https://attend.wordly.ai/frame/XVCS-9354"
+    }
+  ]
+}

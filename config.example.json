@@ -1,0 +1,7 @@
+{
+  "mode": "embed",
+  "halls": [
+    { "id": "a", "name": "Hall A", "attendeeUrl": "", "embedUrl": "" },
+    { "id": "b", "name": "Hall B", "attendeeUrl": "", "embedUrl": "" }
+  ]
+}
