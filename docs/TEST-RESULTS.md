@@ -57,3 +57,5 @@ The hall chooser no longer repeats direct links. Selection replaces the chooser 
 Validation: 14 unit tests and 18 browser tests, including focused-view layout, frame teardown, fallback recovery, no unsolicited timeout warning and frame bounds for both hall names at 320/390 widths. The shell accessibility and wider layout tests remain included. Provider responses in browser tests are simulated. A screenshot of the active test layout is labelled as a simulated provider response.
 
 Initial local test attempts required loopback permission and the already downloaded matching Chromium path; an outdated test locator for hidden hall controls was corrected before the final suite. These were tooling/test issues, not a live-provider test.
+
+Revision 1.4 deployed successfully through GitHub Actions run 40547506488 from commit `911dfa2693bba1553a0974f99ac7276a850b2642`. The final browser suite completed with 18 passes in 3.4 seconds; the unit suite passed all 14 checks.

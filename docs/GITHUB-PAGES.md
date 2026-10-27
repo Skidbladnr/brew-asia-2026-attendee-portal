@@ -4,7 +4,7 @@ Repository: https://github.com/Skidbladnr/brew-asia-2026-attendee-portal. Public
 
 Live controlled-test address: https://skidbladnr.github.io/brew-asia-2026-attendee-portal/
 
-Deployment [40545063071](https://github.com/Skidbladnr/brew-asia-2026-attendee-portal/actions/runs/40545063071) succeeded on 27 October 2026 from commit `3664b9fd247fc1abf973f962b8d9439e57aeab9f`. The hosted shell, programme, hall selection and direct-link destinations were checked; no provider session was joined.
+Latest deployment: [40547506488](https://github.com/Skidbladnr/brew-asia-2026-attendee-portal/actions/runs/40547506488) succeeded on 28 October 2026 from revision 1.4 commit `911dfa2693bba1553a0974f99ac7276a850b2642`. The previous release was `3664b9fd247fc1abf973f962b8d9439e57aeab9f`; restoring that source and rerunning the manual workflow provides rollback. The owner supplied working iPhone caption evidence for the prior release. Real-device rechecking of the revised layout and simultaneous halls remains pending.
 
 ## Is this plug and play?
 
