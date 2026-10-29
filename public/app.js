@@ -1,5 +1,5 @@
 import { startProgramme, setProgrammeHall } from './schedule-view.js';
-import { LANGUAGES, normalizeConfig, initialLanguage, embedSource } from './config-core.js';
+import { LANGUAGES, normalizeConfig, initialLanguage, embedSource } from './config-core.js?v=20261029-languages';
 
 const $ = id => document.getElementById(id);
 let config, selected;
