@@ -13,17 +13,22 @@ for (const item of LANGUAGES) {
   option.lang = item.code;
   language.append(option);
 }
-language.value = LANGUAGES.some(item => item.code === preferred) ? preferred : initialLanguage(navigator.languages);
+const otherLanguage = document.createElement('option');
+otherLanguage.value = 'other';
+otherLanguage.textContent = 'Other languages…';
+language.append(otherLanguage);
+language.value = preferred === 'other' || LANGUAGES.some(item => item.code === preferred) ? preferred : initialLanguage(navigator.languages);
 const quickStart = {
   vi: 'Đeo tai nghe, chạm “Start listening”, rồi bật âm thanh trong khung bên dưới.',
   th: 'ใส่หูฟัง แตะ “Start listening” แล้วเปิดเสียงในแผงด้านล่าง',
   'zh-CN': '戴上耳机，点击“Start listening”，然后在下方的面板中开启音频。',
   ko: '이어폰을 연결하고 “Start listening”을 누른 다음, 아래 패널에서 음성을 켜세요.',
   ja: 'イヤホンを接続し、「Start listening」をタップしてから、下のパネルで音声をオンにしてください。',
+  other: 'Tap “Start listening”, then choose your language from the menu at the bottom of the captions panel.',
 };
 function updateQuickStart() {
   $('native-help').textContent = quickStart[language.value];
-  $('native-help').lang = language.value;
+  $('native-help').lang = language.value === 'other' ? 'en' : language.value;
 }
 updateQuickStart();
 
@@ -82,6 +87,9 @@ function join() {
   frame.allow = 'autoplay';
   frame.src = embedSource(selected, language.value);
   document.body.classList.add('is-listening');
+  $('audio-hint').textContent = language.value === 'other'
+    ? 'Choose your language at the bottom of the panel. Use headphones and tap the audio control to listen.'
+    : 'Use headphones. Tap the audio control below to listen.';
   $('audio-hint').hidden = false;
   $('leave').hidden = false;
   // Cross-origin content cannot report caption/audio health to the portal.

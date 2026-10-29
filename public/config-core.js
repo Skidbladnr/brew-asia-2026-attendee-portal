@@ -58,14 +58,16 @@ export function initialLanguage(browserLanguages = []) {
 }
 
 export function embedSource(hall, language) {
-  if (!LANGUAGES.some(item => item.code === language)) throw new Error('Unsupported language.');
+  if (language !== 'other' && !LANGUAGES.some(item => item.code === language)) throw new Error('Unsupported language.');
   const parsed = parseUrl(hall.embedUrl, 'frame');
   if (!parsed) throw new Error('No iframe configured.');
   const url = new URL(parsed.href);
   // Only documented display parameters. No postMessage or private API calls.
   url.searchParams.delete('hide');
-  url.searchParams.set('show', LANGUAGES.map(item => item.code).join(','));
-  url.searchParams.set('lang', language);
+  // Leave the full provider language menu available, including after a preset join.
+  url.searchParams.delete('show');
+  if (language === 'other') url.searchParams.delete('lang');
+  else url.searchParams.set('lang', language);
   url.searchParams.set('enableTTS', 'true');
   url.searchParams.set('fgcolor', '#142f2a');
   url.searchParams.set('bgcolor', '#ffffff');

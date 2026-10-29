@@ -63,6 +63,26 @@ test('all five choices, changing language disconnects, no automatic playback', a
   }
 });
 
+test('other languages opens one unrestricted frame with clear picker instructions', async ({ page }) => {
+  await page.goto('/?hall=b');
+  await page.locator('#language').selectOption('other');
+  await expect(page.locator('#native-help')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('#native-help')).toContainText('choose your language');
+  await expect(page.locator('iframe')).toHaveCount(0);
+  await page.locator('#join').click();
+  await expect(page.locator('iframe')).toHaveCount(1);
+  const src = new URL(await page.locator('iframe').getAttribute('src'));
+  expect(src.pathname).toBe('/frame/XVCS-9354');
+  for (const key of ['lang', 'show', 'hide']) expect(src.searchParams.has(key)).toBe(false);
+  await expect(page.locator('#audio-hint')).toContainText('Choose your language');
+  await page.locator('#session-help summary').click();
+  await page.locator('#leave').click();
+  await page.locator('#language').selectOption('ja');
+  await page.locator('#join').click();
+  await expect(page.locator('iframe')).toHaveCount(1);
+  await expect(page.locator('iframe')).toHaveAttribute('src', /lang=ja/);
+});
+
 test('network loss disconnects and return requires a new gesture', async ({ page, context }) => {
   await page.goto('/?hall=a');
   await page.locator('#join').click();

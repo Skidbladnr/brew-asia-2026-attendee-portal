@@ -19,13 +19,22 @@ test('each of five languages produces documented parameters and preserves passco
   for (const { code } of LANGUAGES) {
     const url = new URL(embedSource(hall, code));
     assert.equal(url.searchParams.get('lang'), code);
-    assert.equal(url.searchParams.get('show'), 'vi,th,zh-CN,ko,ja');
+    assert.equal(url.searchParams.get('show'), null);
     assert.equal(url.searchParams.get('enableTTS'), 'true');
     assert.equal(url.searchParams.get('key'), 'test+code');
     assert.equal(url.searchParams.get('fgsize'), '22px');
     assert.equal(url.searchParams.get('hide'), null);
   }
   assert.throws(() => embedSource(hall, 'bad'));
+});
+test('other languages uses browser default and the unrestricted provider menu', () => {
+  const hall = fixture().halls[0];
+  hall.embedUrl += '?lang=ja&show=ja&hide=en&key=test';
+  const url = new URL(embedSource(hall, 'other'));
+  for (const key of ['lang', 'show', 'hide']) assert.equal(url.searchParams.get(key), null);
+  assert.equal(url.searchParams.get('key'), 'test');
+  assert.equal(url.searchParams.get('enableTTS'), 'true');
+  assert.equal(url.pathname, '/frame/TEST-1000');
 });
 test('reject presenter, lookalike origin, credentials, HTTP, unsafe paths and unknown embed arguments', () => {
   for (const url of ['https://present.wordly.ai/frame/TEST-1000', 'https://attend.wordly.ai.evil.test/frame/TEST-1000', 'http://attend.wordly.ai/frame/TEST-1000', 'https://user:secret@attend.wordly.ai/frame/TEST-1000', 'https://attend.wordly.ai/present/TEST-1000', 'javascript:alert(1)', 'https://attend.wordly.ai/frame/TEST-1000?undocumented=1']) {

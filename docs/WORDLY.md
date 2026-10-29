@@ -1,6 +1,6 @@
 # Verified Wordly contract
 
-Checked against official documentation on 27 October 2026:
+Embed parameters rechecked against official documentation on 29 October 2026:
 
 - [iFrame Integration](https://help.wordly.ai/iframe-integration)
 - [Language Codes](https://help.wordly.ai/about-languages-supported)
@@ -11,8 +11,8 @@ This portal sets these documented options:
 
 | Parameter | Value/purpose |
 | --- | --- |
-| `show` | `vi,th,zh-CN,ko,ja`; limits language menus |
-| `lang` | Initial attendee language chosen in the portal |
+| `show`, `hide` | Removed so the full provider language menu stays available |
+| `lang` | Initial preset chosen in the portal; omitted for “Other languages…” so Wordly uses the browser default |
 | `enableTTS` | `true`; exposes Wordly speech controls |
 | `fgcolor`, `bgcolor` | Dark text, white caption background |
 | `fgsize` | `22px` caption size |
@@ -21,7 +21,7 @@ This portal sets these documented options:
 
 The language codes are Vietnamese `vi`, Thai `th`, Simplified Chinese `zh-CN`, Korean `ko`, and Japanese `ja`.
 
-The validator also recognizes documented `tags`, `speakerLanguage`, `finalOnly` and `hide`; the generated frame removes `hide` to avoid conflicts with the five-language list.
+The validator also recognizes documented `tags`, `speakerLanguage`, `finalOnly` and `hide`. Five preset choices remain in the portal, plus “Other languages…” with guidance to choose from the menu inside the captions panel. Additional languages are provided by Wordly, not a copied language catalog. Their live captions and speech output have not been tested by this update.
 
 These parameters configure the official frame. Parent CSS cannot restyle its controls. No private API, undocumented endpoint, or postMessage protocol is used. `enableTTS` does not guarantee automatic audio playback. Real-device testing must confirm behavior, captions and available speech output.
 
