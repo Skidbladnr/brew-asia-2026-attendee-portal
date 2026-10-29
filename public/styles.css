@@ -266,3 +266,34 @@ footer a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px
   .day-picker button { gap: 8px; }
   .day-number { font-size: 29px; }
 }
+
+/* Ceremony styling stays outside the provider panel and recedes while listening. */
+.ceremony-mark { display: none; }
+.is-ceremony { --ceremony-gold: #92703f; border-top-color: #92703f; }
+.is-ceremony .masthead { border-bottom-color: #d8c7a8; }
+.is-ceremony main { max-width: 720px; padding-top: 30px; padding-bottom: 26px; }
+.is-ceremony .ceremony-mark { display: flex; align-items: center; justify-content: center; gap: 18px; color: var(--ceremony-gold); margin: 0 0 15px; }
+.ceremony-mark svg { width: 72px; height: 49px; flex-shrink: 0; }
+.ceremony-mark::before, .ceremony-mark::after { content: ''; height: 1px; width: 64px; background: #cbb78f; }
+.is-ceremony .session .section-heading { justify-content: center; margin-bottom: 12px; }
+.is-ceremony #session-title { font: 400 clamp(32px, 5vw, 44px)/1.15 Georgia, 'Times New Roman', serif; color: #702333; text-align: center; letter-spacing: -.7px; }
+.is-ceremony .session-context { border: 0; padding: 0 !important; margin: 0 0 28px; text-align: center; color: #66563f; font-size: 13px; letter-spacing: .3px; }
+.is-ceremony #embed-controls { padding: 20px; background: #fffdf8; border: 1px solid #ddceb4; border-top: 2px solid #b79a65; border-radius: 4px; }
+.is-ceremony #embed-controls label { font-size: 13px; font-weight: 500; margin-bottom: 10px; }
+.is-ceremony select { border-radius: 4px; }
+.is-ceremony .primary { background: #80283a; border-color: #80283a; border-radius: 4px; }
+.is-ceremony .primary:hover { background: #63202d; }
+.is-ceremony #native-help { color: #665d51; margin-top: 14px; }
+.is-ceremony .session-help { margin-top: 20px; border-color: #ddceb4; }
+.is-ceremony footer { border-top: 1px solid #cbb78f; }
+.is-ceremony.is-listening main { max-width: 900px; padding-top: 12px; padding-bottom: 14px; }
+.is-ceremony.is-listening .ceremony-mark { display: none; }
+.is-ceremony.is-listening .session .section-heading { justify-content: flex-start; }
+.is-ceremony.is-listening #session-title { font: 500 24px/1.15 var(--display); letter-spacing: 0; text-align: left; }
+@media (max-width: 600px) {
+  .is-ceremony main { padding: 24px 18px 18px; }
+  .is-ceremony .ceremony-mark { margin-bottom: 12px; }
+  .is-ceremony .session-context { margin-bottom: 23px; font-size: 12px; }
+  .is-ceremony #embed-controls { padding: 16px; }
+  .is-ceremony.is-listening main { padding: 10px 14px 14px; }
+}

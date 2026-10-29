@@ -30,6 +30,20 @@ test('awards mode uses only Joe White feed even for old hall QR links', async ({
     await page.locator('#leave').click();
     await expect(page.locator('iframe')).toHaveCount(0);
   }
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect(page.locator('.ceremony-mark')).toBeVisible();
+    await page.locator('#join').click();
+    await expect(page.locator('.ceremony-mark')).toBeHidden();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.locator('#session-help summary').click();
+    await page.locator('#leave').click();
+  }
+  const accessibility = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+  expect(accessibility.violations).toEqual([]);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: '../../work/awards-mobile-style.png', fullPage: true, scale: 'css' });
 });
 
 test('landing has two hall choices without duplicate exit links or external requests', async ({ page }) => {

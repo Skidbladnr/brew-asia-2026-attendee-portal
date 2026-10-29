@@ -152,6 +152,7 @@ try {
   config = normalizeConfig(await response.json());
   $('hall-list').replaceChildren();
   if (config.ceremonyHall) {
+    document.body.classList.add('is-ceremony');
     // Use the existing attendee feed; never start playback without a user gesture.
     const hall = config.halls.find(item => item.id === config.ceremonyHall);
     selectHall({ ...hall, name: 'Awards ceremony' });
