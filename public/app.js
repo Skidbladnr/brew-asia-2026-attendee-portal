@@ -182,7 +182,9 @@ try {
       text.textContent = 'Link awaiting event team';
       article.append(text);
     }
-    $('hall-list').append(article);
+    // Entrance order: Joe White on the left, Barth Haas on the right.
+    if (hall.id === 'b') $('hall-list').prepend(article);
+    else $('hall-list').append(article);
   }
   startProgramme(config.halls, hall => {
     selectHall(hall);

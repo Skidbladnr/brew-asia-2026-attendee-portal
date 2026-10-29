@@ -161,9 +161,9 @@ test('keyboard reaches hall controls and can select without touch', async ({ pag
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to interpretation' })).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(hall(page)).toBeFocused();
+  await expect(hall(page, 1)).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(hall(page)).toHaveAttribute('aria-pressed', 'true');
+  await expect(hall(page, 1)).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('programme shows current and next by Vietnam time without reloading active audio', async ({ page }) => {
