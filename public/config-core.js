@@ -45,7 +45,9 @@ export function normalizeConfig(raw) {
   });
   if (halls[0].session && halls[0].session === halls[1].session)
     throw new Error('The two halls must use different Wordly sessions.');
-  return { mode: raw.mode, halls };
+  if (raw.ceremonyHall !== undefined && !halls.some(hall => hall.id === raw.ceremonyHall))
+    throw new Error('The ceremony must use a configured hall feed.');
+  return { mode: raw.mode, halls, ceremonyHall: raw.ceremonyHall };
 }
 
 export function initialLanguage(browserLanguages = []) {

@@ -36,6 +36,15 @@ test('other languages uses browser default and the unrestricted provider menu', 
   assert.equal(url.searchParams.get('enableTTS'), 'true');
   assert.equal(url.pathname, '/frame/TEST-1000');
 });
+test('ceremony mode selects an existing feed and rejects unknown halls', () => {
+  const raw = fixture();
+  raw.ceremonyHall = 'b';
+  const config = normalizeConfig(raw);
+  assert.equal(config.ceremonyHall, 'b');
+  assert.equal(config.halls.find(h => h.id === config.ceremonyHall).session, 'TEST-2000');
+  raw.ceremonyHall = 'unknown';
+  assert.throws(() => normalizeConfig(raw), /configured hall feed/);
+});
 test('reject presenter, lookalike origin, credentials, HTTP, unsafe paths and unknown embed arguments', () => {
   for (const url of ['https://present.wordly.ai/frame/TEST-1000', 'https://attend.wordly.ai.evil.test/frame/TEST-1000', 'http://attend.wordly.ai/frame/TEST-1000', 'https://user:secret@attend.wordly.ai/frame/TEST-1000', 'https://attend.wordly.ai/present/TEST-1000', 'javascript:alert(1)', 'https://attend.wordly.ai/frame/TEST-1000?undocumented=1']) {
     const raw = fixture(); raw.halls[0].embedUrl = url;

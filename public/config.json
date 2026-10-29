@@ -1,5 +1,6 @@
 {
   "mode": "embed",
+  "ceremonyHall": "b",
   "halls": [
     {
       "id": "a",

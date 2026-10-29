@@ -4,10 +4,33 @@ import { readFile } from 'node:fs/promises';
 const config = JSON.parse(await readFile(new URL('../../public/config.json', import.meta.url)));
 const frameMock = '<!doctype html><html lang="en"><meta charset="utf-8"><title>Simulated attendee frame</title><body><p>TEST ONLY — simulated Wordly response.</p><button>Enable audio (simulation)</button></body></html>';
 test.beforeEach(async ({ page }) => {
+  // Retain coverage of conference mode while the deployed config uses ceremony mode.
+  await page.route('**/config.json', route => route.fulfill({ json: { ...config, ceremonyHall: undefined } }));
   // Never contact real event sessions during automated tests.
   await page.route('https://attend.wordly.ai/**', route => route.fulfill({ contentType: 'text/html', body: frameMock }));
 });
 const hall = (page, index = 0) => page.locator(`.hall-choice[data-hall="${config.halls[index].id}"]`);
+
+test('awards mode uses only Joe White feed even for old hall QR links', async ({ page }) => {
+  await page.route('**/config.json', route => route.fulfill({ json: { ...config, ceremonyHall: 'b' } }));
+  for (const suffix of ['', '?hall=a', '?hall=b&lang=other']) {
+    await page.goto('/' + suffix);
+    await expect(page.locator('#session-title')).toHaveText('Awards ceremony');
+    await expect(page.locator('#change-hall')).toBeHidden();
+    await expect(page.locator('.chooser')).toBeHidden();
+    await expect(page.locator('#programme')).toBeHidden();
+    await expect(page.locator('#selected-programme')).toHaveText('Asia Beer & Cider Championships');
+    await expect(page.locator('iframe')).toHaveCount(0);
+    await page.locator('#join').click();
+    await expect(page.locator('iframe')).toHaveCount(1);
+    await expect(page.locator('iframe')).toHaveAttribute('src', /\/frame\/XVCS-9354\?/);
+    await expect(page.locator('iframe')).toHaveAttribute('title', 'Interpretation — Awards ceremony');
+    await page.locator('#session-help summary').click();
+    await expect(page.locator('#session-fallback')).toHaveAttribute('href', config.halls[1].attendeeUrl);
+    await page.locator('#leave').click();
+    await expect(page.locator('iframe')).toHaveCount(0);
+  }
+});
 
 test('landing has two hall choices without duplicate exit links or external requests', async ({ page }) => {
   let requests = 0;

@@ -108,3 +108,7 @@ Optional test deep links on that same root are `?hall=a&lang=vi` and `?hall=b&la
 - `docs/schedule-preview.png`: a **simulated 28 October, 11:10** timetable view for design review; not evidence of a live broadcast.
 
 The referenced conversation exposed no downloadable `Brew_Asia_2026_Trip_Agent_Handoff.md`. This build follows the explicit confirmed brief: two MacBooks, two independent router/feed setups, individually tested rooms, and simultaneous testing still pending for the morning.
+
+## Awards ceremony mode
+
+The deployed configuration sets `ceremonyHall` to `b`: visitors go straight to **Awards ceremony**, using the existing Joe White attendee feed. The hall chooser and conference programme are hidden, including for old hall-specific portal links. Language selection, user-initiated playback and the direct fallback remain available. Remove `ceremonyHall` from `public/config.json` to restore the two-hall conference view. This setting does not start or change the presenter feed.

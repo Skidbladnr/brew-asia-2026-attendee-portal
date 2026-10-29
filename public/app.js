@@ -1,5 +1,5 @@
 import { startProgramme, setProgrammeHall } from './schedule-view.js';
-import { LANGUAGES, normalizeConfig, initialLanguage, embedSource } from './config-core.js?v=20261029-languages';
+import { LANGUAGES, normalizeConfig, initialLanguage, embedSource } from './config-core.js?v=20261029-awards';
 
 const $ = id => document.getElementById(id);
 let config, selected;
@@ -151,56 +151,66 @@ try {
   if (!response.ok) throw new Error('Configuration unavailable');
   config = normalizeConfig(await response.json());
   $('hall-list').replaceChildren();
-  for (const hall of config.halls) {
-    const article = document.createElement('article');
-    article.className = `hall-card hall-${hall.id}`;
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'hall-choice';
-    button.dataset.hall = hall.id;
-    button.setAttribute('aria-pressed', 'false');
-    button.setAttribute('aria-controls', 'session');
-    const name = document.createElement('span');
-    name.textContent = hall.name;
-    const indicator = document.createElement('span');
-    indicator.className = 'indicator';
-    indicator.textContent = '→';
-    indicator.setAttribute('aria-hidden', 'true');
-    const logo = document.createElement('img');
-    logo.src = hall.id === 'a' ? './assets/barth-haas.jpg' : './assets/joe-white.png';
-    logo.alt = '';
-    logo.className = 'hall-logo';
-    logo.width = 64;
-    logo.height = 64;
-    button.append(logo, name, indicator);
-    button.addEventListener('click', () => {
+  if (config.ceremonyHall) {
+    // Use the existing attendee feed; never start playback without a user gesture.
+    const hall = config.halls.find(item => item.id === config.ceremonyHall);
+    selectHall({ ...hall, name: 'Awards ceremony' });
+    $('change-hall').hidden = true;
+    $('programme').hidden = true;
+    $('selected-programme').textContent = 'Asia Beer & Cider Championships';
+    document.title = 'Brew Asia 2026 · Awards ceremony';
+  } else {
+    for (const hall of config.halls) {
+      const article = document.createElement('article');
+      article.className = `hall-card hall-${hall.id}`;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'hall-choice';
+      button.dataset.hall = hall.id;
+      button.setAttribute('aria-pressed', 'false');
+      button.setAttribute('aria-controls', 'session');
+      const name = document.createElement('span');
+      name.textContent = hall.name;
+      const indicator = document.createElement('span');
+      indicator.className = 'indicator';
+      indicator.textContent = '→';
+      indicator.setAttribute('aria-hidden', 'true');
+      const logo = document.createElement('img');
+      logo.src = hall.id === 'a' ? './assets/barth-haas.jpg' : './assets/joe-white.png';
+      logo.alt = '';
+      logo.className = 'hall-logo';
+      logo.width = 64;
+      logo.height = 64;
+      button.append(logo, name, indicator);
+      button.addEventListener('click', () => {
+        selectHall(hall);
+        $('session').scrollIntoView({ block: 'start' });
+        $('session-title').focus({ preventScroll: true });
+      });
+      article.append(button);
+      const programme = document.createElement('div');
+      programme.className = 'hall-programme';
+      programme.dataset.scheduleHall = hall.id;
+      programme.textContent = 'Checking the programme…';
+      article.append(programme);
+      if (!hall.attendeeUrl) {
+        const text = document.createElement('p');
+        text.className = 'unavailable';
+        text.textContent = 'Link awaiting event team';
+        article.append(text);
+      }
+      // Entrance order: Joe White on the left, Barth Haas on the right.
+      if (hall.id === 'b') $('hall-list').prepend(article);
+      else $('hall-list').append(article);
+    }
+    startProgramme(config.halls, hall => {
       selectHall(hall);
       $('session').scrollIntoView({ block: 'start' });
-      $('session-title').focus({ preventScroll: true });
+      ($('embed-controls').hidden ? $('direct-start') : $('join')).focus({ preventScroll: true });
     });
-    article.append(button);
-    const programme = document.createElement('div');
-    programme.className = 'hall-programme';
-    programme.dataset.scheduleHall = hall.id;
-    programme.textContent = 'Checking the programme…';
-    article.append(programme);
-    if (!hall.attendeeUrl) {
-      const text = document.createElement('p');
-      text.className = 'unavailable';
-      text.textContent = 'Link awaiting event team';
-      article.append(text);
-    }
-    // Entrance order: Joe White on the left, Barth Haas on the right.
-    if (hall.id === 'b') $('hall-list').prepend(article);
-    else $('hall-list').append(article);
+    const requested = config.halls.find(hall => hall.id === query.get('hall'));
+    if (requested) selectHall(requested); // QR deep links select only; never auto-join.
   }
-  startProgramme(config.halls, hall => {
-    selectHall(hall);
-    $('session').scrollIntoView({ block: 'start' });
-    ($('embed-controls').hidden ? $('direct-start') : $('join')).focus({ preventScroll: true });
-  });
-  const requested = config.halls.find(hall => hall.id === query.get('hall'));
-  if (requested) selectHall(requested); // QR deep links select only; never auto-join.
 } catch {
   $('hall-list').textContent = 'Hall links are temporarily unavailable.';
   $('config-notice').hidden = false;
